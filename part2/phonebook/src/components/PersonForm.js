@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-const PersonForm = ({ handleSubmit }) => {
+const PersonForm = ({ handleSubmit, handleAlert }) => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
 
   const doSubmit = (event) => {
     event.preventDefault()
     if (newName === '' || newNumber === '') {
-      alert('You need to input the data (name & number) first')
+      handleAlert('error', 'You need to input the data (name & number) first')
       return
     }
 
