@@ -1,31 +1,67 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ searchValue, setSearchValue ] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+      .catch(error => {
+        console.warn(error)
       })
   }, [])
 
-  const isExist = (name) => persons.find(person => person.name.toUpperCase() === name.toUpperCase()) ? true : false
+  const isExist = name => persons.findIndex(person => person.name.toUpperCase() === name.toUpperCase())
 
   const handleSubmit = (newName, newNumber) => {
-    if (isExist(newName)) {
-      alert(`${newName} is already added to phonebook`)
-      return 'fail'
+    const pos = isExist(newName)
+    if (pos >= 0) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number (${persons[pos].number}) with a new one (${newNumber})?`)) {
+        const newPerson = { name: persons[pos].name, number: newNumber }
+        personService
+          .update(persons[pos].id, newPerson)
+          .then (returnPerson => {
+            setPersons(persons.map(person => 
+              person.id !== persons[pos].id 
+              ? person 
+              : returnPerson))
+          })
+          .catch(error => {
+            console.warn(error)
+            return 'fail'
+          })
+        return 'success'
+      }
     } else {
-      setPersons(persons.concat({ name: newName, number: newNumber }))
+      personService
+        .create({ name: newName, number: newNumber })
+        .then(newPerson => {
+          setPersons(persons.concat(newPerson))
+        })
+        .catch(error => {
+          console.warn(error)
+          return 'fail'
+        })
       return 'success'
     }
+  }
+
+  const handleRemove = (id) => {
+    personService
+      .remove(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+      .catch(error => {
+        console.warn(error)
+      })
+
   }
 
   const findPersons = (list, value) => {
@@ -49,8 +85,12 @@ const App = () => {
       <PersonForm handleSubmit={handleSubmit}/>
 
       <h2>Numbers</h2>
-      <Persons persons={searchValue === '' ? persons : findPersons(persons, searchValue)}/>
-      
+      <Persons 
+        persons={searchValue === '' 
+          ? persons 
+          : findPersons(persons, searchValue)}
+        handleRemove={handleRemove}
+      />
     </div>
   )
 }

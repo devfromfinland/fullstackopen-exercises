@@ -6,6 +6,11 @@ const PersonForm = ({ handleSubmit }) => {
 
   const doSubmit = (event) => {
     event.preventDefault()
+    if (newName === '' || newNumber === '') {
+      alert('You need to input the data (name & number) first')
+      return
+    }
+
     if (handleSubmit(newName, newNumber) === 'success') {
       setNewNumber('')
       setNewName('')
