@@ -14,15 +14,11 @@ const Weather = ({ city }) => {
       })
   }, [query])
 
-  let temperature, iconURL, windSpeed, windDirection
-
-  if (typeof(weatherData.current) !== 'undefined') {
-    temperature = weatherData.current.temperature
-    iconURL = weatherData.current.weather_icons[0]
-    windSpeed = weatherData.current.wind_speed
-    windDirection = weatherData.current.wind_dir
-  }
-
+  const temperature = weatherData.current ? weatherData.current.temperature : null
+  const iconURL = weatherData.current ? weatherData.current.weather_icons[0] : null
+  const windSpeed = weatherData.current ? weatherData.current.wind_speed : null
+  const windDirection = weatherData.current ? weatherData.current.wind_dir : null
+  
   return (
     <div>
       <h3>Weather in {city}</h3>
