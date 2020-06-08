@@ -30,50 +30,77 @@ const App = () => {
     })
     setTimeout(() => {
       setAlertMessage(null)
-    }, 3000)
+    }, 5000)
   }
 
   const handleSubmit = (newName, newNumber) => {
-    const pos = isExist(newName)
-    if (pos >= 0) {
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number (${persons[pos].number}) with a new one (${newNumber})?`)) {
-        const newPerson = { name: persons[pos].name, number: newNumber }
+    return new Promise((resolve, reject) => {
+      const pos = isExist(newName)
+      if (pos >= 0) {
+        if (window.confirm(`${newName} is already added to phonebook, replace the old number (${persons[pos].number}) with a new one (${newNumber})?`)) {
+          const newPerson = { name: persons[pos].name, number: newNumber }
+          personService
+            .update(persons[pos].id, newPerson)
+            .then (returnPerson => {
+              setPersons(persons.map(person => 
+                person.id !== persons[pos].id 
+                ? person 
+                : returnPerson))
+  
+              resolve({ 
+                type: 'success', 
+                message: `${newName}'s new phone number was updated` 
+              })
+            })
+            .catch(error => {
+              let msgToReturn = ''
+
+              switch (error.message) {
+                case 'Request failed with status code 404':
+                  setPersons(persons.filter(person => person.name.toUpperCase() !== newName.toUpperCase()))
+                  msgToReturn = `Information of ${newName} has been already removed from server`
+                  break;
+
+                case 'Request failed with status code 400':
+                  msgToReturn = `Bad request (either because of the input or the person is not existed in the phonebook. Please refresh your browser.`
+                  break;
+              
+                default:
+                  break;
+              }
+
+              console.log(error)
+              
+              reject({ 
+                type: 'error', 
+                message: msgToReturn
+              })
+            })
+        } else {
+          resolve({ 
+            type: 'warning', 
+            message: 'Nothing happens yet'
+          })
+        }
+      } else {
         personService
-          .update(persons[pos].id, newPerson)
-          .then (returnPerson => {
-            setPersons(persons.map(person => 
-              person.id !== persons[pos].id 
-              ? person 
-              : returnPerson))
+          .create({ name: newName, number: newNumber })
+          .then(newPerson => {
+            setPersons(persons.concat(newPerson))
+            resolve({ 
+              type: 'success', 
+              message: `${newName} was added successfully to the phonebook` 
+            })
           })
           .catch(error => {
-            (error.message === 'Request failed with status code 404')
-              ? notify('error', `Information of ${newName} has been already removed from server`)
-              : notify('error', 'Error updating new phone number')
-            
-            setPersons(persons.filter(person => person.name.toUpperCase() !== newName.toUpperCase()))
-            return 'fail'
+            console.log(error)
+            reject({ 
+              type: 'error', 
+              message: error.response.data.error
+            })
           })
-        
-        notify('success', `${newName}'s new phone number was updated`)
-        return 'success'
       }
-      notify('warning', 'Nothing happens yet')
-    } else {
-      personService
-        .create({ name: newName, number: newNumber })
-        .then(newPerson => {
-          setPersons(persons.concat(newPerson))
-        })
-        .catch(error => {
-          console.warn(error)
-          notify('error', 'Error adding new person to the phonebook')
-          return 'fail'
-        })
-      
-      notify('success', `${newName} was added successfully to the phonebook`)
-      return 'success'
-    }
+    }) 
   }
 
   const handleRemove = (id) => {
@@ -82,7 +109,7 @@ const App = () => {
       .then(setPersons(persons.filter(person => person.id !== id)))
       .then(notify('success', 'Remove successfully'))
       .catch(error => {
-        console.warn(error)
+        console.log(error)
         notify('error', 'Error when trying to remove the person')
       })
   }
@@ -107,7 +134,7 @@ const App = () => {
       <Filter handleFilter={handleFilter}/>
 
       <h2>add a new</h2>
-      <PersonForm handleSubmit={handleSubmit} handleAlert={notify}/>
+      <PersonForm handleSubmit={handleSubmit}/>
 
       <h2>Numbers</h2>
       <Persons 
