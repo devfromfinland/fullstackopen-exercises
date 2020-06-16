@@ -17,11 +17,13 @@ const App = () => {
 
   useEffect(() => {
     const authedUser = window.localStorage.getItem('authedUser')
+    
     if (authedUser) {
       const user = JSON.parse(authedUser)
       setUser(user)
-      // set logged in token
+      blogService.setToken(user.token)
     }
+
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
@@ -37,6 +39,13 @@ const App = () => {
     }, 5000)
   }
 
+  const getAuthedUser = () => {
+    const authedUser = window.localStorage.getItem('authedUser')
+    return authedUser
+      ? JSON.parse(authedUser)
+      : null
+  }
+
   const handleLogin = async ({ username, password }) => {
     if (username === '' || password === '') {
       notify('error', `Username and password must be filled`)
@@ -47,6 +56,7 @@ const App = () => {
       const result = await authService.login({ username, password })
       setUser(result) // name, username, token
       window.localStorage.setItem('authedUser',JSON.stringify(result))
+      blogService.setToken(result.token)
       // set logged in token
     } catch(exception) {
       notify('error', `wrong username or password`)
@@ -58,8 +68,33 @@ const App = () => {
     window.localStorage.removeItem('authedUser')
   }
 
-  const handleNewBlog = ({ title, author, url }) => {
-    notify('success', `a new blog ${title} by ${author} was added`)
+  const handleNewBlog = async (blog) => {
+    const { title, author, url } = blog
+    try {
+      const savedBlog = await blogService.create(blog)
+      console.log('result', savedBlog)
+      const authedUser = getAuthedUser()
+      setBlogs([
+        ...blogs,
+        {
+          title,
+          author,
+          url,
+          id: savedBlog.id,
+          user: {
+            username: authedUser.username,
+            name: authedUser.name,
+            id: savedBlog.user
+          },
+          likes: savedBlog.likes
+        }
+      ])
+      notify('success', `a new blog ${title} by ${author} was added`)
+      // todo: update state
+    } catch (exception) {
+      notify('error', `fail adding a new blog`)
+      console.log(exception)
+    }
   }
 
   if (user) {
