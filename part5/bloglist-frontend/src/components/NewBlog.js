@@ -1,4 +1,5 @@
 import React, { useState, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 
 const NewBlog = React.forwardRef(({ handleNewBlog }, ref) => {
   const [title, setTitle] = useState('')
@@ -40,5 +41,11 @@ const NewBlog = React.forwardRef(({ handleNewBlog }, ref) => {
     </div>
   )
 })
+
+NewBlog.displayName = 'NewBlog'
+
+NewBlog.propTypes = {
+  handleNewBlog: PropTypes.func.isRequired,
+}
 
 export default NewBlog

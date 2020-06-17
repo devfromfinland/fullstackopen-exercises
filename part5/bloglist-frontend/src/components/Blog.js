@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Togglable from './Togglable'
 import { getAuthedUser } from '../utils/helpers'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, handleRemove, handleUpdate }) => {
   const [display, setDisplay] = useState(false)
@@ -38,6 +39,12 @@ const Blog = ({ blog, handleRemove, handleUpdate }) => {
       </Togglable>
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  handleRemove: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
 }
 
 export default Blog

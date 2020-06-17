@@ -47,7 +47,7 @@ const App = () => {
 
   const handleLogin = async (username, password) => {
     if (username === '' || password === '') {
-      notify('error', `Username and password must be filled`)
+      notify('error', 'Username and password must be filled')
       return
     }
 
@@ -58,7 +58,7 @@ const App = () => {
       setUser(result) // name, username, token
       blogService.setToken(result.token)
     } catch(exception) {
-      notify('error', `wrong username or password`)
+      notify('error', 'wrong username or password')
     }
   }
 
@@ -70,10 +70,10 @@ const App = () => {
   const handleNewBlog = async ({ title, author, url }) => {
     // const { title, author, url } = blog
     if (title === '' || author === '' || url === '') {
-      notify('error', `please fill in all fields`)
+      notify('error', 'please fill in all fields')
       return
     }
-    
+
     try {
       const savedBlog = await blogService.create({ title, author, url })
       // console.log('result', savedBlog)
@@ -97,7 +97,7 @@ const App = () => {
       ])
       notify('success', `a new blog ${title} by ${author} was added`)
     } catch (exception) {
-      notify('error', `fail adding a new blog`)
+      notify('error', 'fail adding a new blog')
       console.log(exception)
     }
   }
@@ -118,7 +118,7 @@ const App = () => {
     // console.log('blog', blog)
     try {
       let updatedBlog = await blogService.update(blog.id, updatedData)
-      updatedBlog.user = {...blog.user}
+      updatedBlog.user = { ...blog.user }
       // console.log('updatedBlog', updatedBlog)
       const updatedBlogs = blogs.map(item => item.id === blog.id ? updatedBlog : item)
       setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
@@ -152,9 +152,9 @@ const App = () => {
 
         <div>
           {blogs.map(blog =>
-            <Blog 
-              key={blog.id} 
-              blog={blog} 
+            <Blog
+              key={blog.id}
+              blog={blog}
               handleRemove={handleRemove}
               handleUpdate={handleUpdate}
             />
@@ -171,8 +171,6 @@ const App = () => {
       </div>
     )
   }
-
-  
 }
 
 export default App
