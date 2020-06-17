@@ -69,3 +69,19 @@
   margin-bottom: 10px;
   width: 100%;
 }
+
+.blog {
+  border-style: solid;
+  padding: 5px;
+  border-width: 1px;
+  margin: 5px 0;
+  background: lightgrey;
+  border-radius: 3px;
+}
+
+.btn-remove {
+  background-color: blue;
+  color: white;
+  border-radius: 5px;
+  border-width: 1px;
+}

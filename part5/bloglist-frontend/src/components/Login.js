@@ -1,13 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useImperativeHandle } from 'react'
 
-const Login = ({ handleLogin }) => {
+const Login = React.forwardRef(({ handleLogin }, ref) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const reset = () => {
+    setUsername('')
+    setPassword('')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    handleLogin({ username, password })
+    handleLogin(username, password)
   }
+
+  useImperativeHandle(ref, () => {
+    return {
+      reset
+    }
+  })
 
   return (
     <div>
@@ -17,7 +28,7 @@ const Login = ({ handleLogin }) => {
           <input
             type='text' 
             value={username} 
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={e => setUsername(e.target.value)}
           />
         </div>
         <div>
@@ -25,14 +36,13 @@ const Login = ({ handleLogin }) => {
           <input 
             type='password'
             value={password} 
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
         </div>
         <button type='submit'>login</button>
       </form>
-      
     </div>
   )
-}
+})
 
 export default Login

@@ -1,16 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useImperativeHandle } from 'react'
 
-const NewBlog = ({ handleNewBlog }) => {
+const NewBlog = React.forwardRef(({ handleNewBlog }, ref) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    handleNewBlog({ title, author, url })
+  const reset = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+      reset
+    }
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    handleNewBlog({ title, author, url })
   }
 
   return (
@@ -30,6 +39,6 @@ const NewBlog = ({ handleNewBlog }) => {
       </form>
     </div>
   )
-}
+})
 
 export default NewBlog

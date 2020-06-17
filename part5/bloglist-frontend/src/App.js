@@ -5,28 +5,34 @@ import Blog from './components/Blog'
 import Login from './components/Login'
 import AlertMessage from './components/AlertMessage'
 import NewBlog from './components/NewBlog'
+import Togglable from './components/Togglable'
 
 import blogService from './services/blogs'
-import userService from './services/users'
+// import userService from './services/users'
 import authService from './services/authentication'
+
+import { saveAuthedUser, getAuthedUser, removeAuthedUser } from './utils/helpers'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)  // The token returned with a successful login is saved to user
   const [alertMessage, setAlertMessage] = useState(null)
+  const loginFormRef = React.createRef()
+  const newBlogFormRef = React.createRef()
+  const displayNewBlogRef = React.createRef()
 
   useEffect(() => {
-    const authedUser = window.localStorage.getItem('authedUser')
-    
-    if (authedUser) {
-      const user = JSON.parse(authedUser)
-      setUser(user)
-      blogService.setToken(user.token)
+    const fetchInitialData = async () => {
+      const blogs = await blogService.getAll()
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     }
 
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    const authedUser = getAuthedUser()
+    if (authedUser) {
+      setUser(authedUser)
+      blogService.setToken(authedUser.token)
+    }
+    fetchInitialData()
   }, [])
 
   const notify = (type, message) => {
@@ -39,25 +45,18 @@ const App = () => {
     }, 5000)
   }
 
-  const getAuthedUser = () => {
-    const authedUser = window.localStorage.getItem('authedUser')
-    return authedUser
-      ? JSON.parse(authedUser)
-      : null
-  }
-
-  const handleLogin = async ({ username, password }) => {
+  const handleLogin = async (username, password) => {
     if (username === '' || password === '') {
       notify('error', `Username and password must be filled`)
       return
     }
 
     try {
-      const result = await authService.login({ username, password })
+      const result = await authService.login(username, password)
+      loginFormRef.current.reset()
+      saveAuthedUser(result)
       setUser(result) // name, username, token
-      window.localStorage.setItem('authedUser',JSON.stringify(result))
       blogService.setToken(result.token)
-      // set logged in token
     } catch(exception) {
       notify('error', `wrong username or password`)
     }
@@ -65,14 +64,21 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null)
-    window.localStorage.removeItem('authedUser')
+    removeAuthedUser()
   }
 
-  const handleNewBlog = async (blog) => {
-    const { title, author, url } = blog
+  const handleNewBlog = async ({ title, author, url }) => {
+    // const { title, author, url } = blog
+    if (title === '' || author === '' || url === '') {
+      notify('error', `please fill in all fields`)
+      return
+    }
+    
     try {
-      const savedBlog = await blogService.create(blog)
-      console.log('result', savedBlog)
+      const savedBlog = await blogService.create({ title, author, url })
+      // console.log('result', savedBlog)
+      newBlogFormRef.current.reset()
+      displayNewBlogRef.current.toggleVisibility()
       const authedUser = getAuthedUser()
       setBlogs([
         ...blogs,
@@ -90,10 +96,34 @@ const App = () => {
         }
       ])
       notify('success', `a new blog ${title} by ${author} was added`)
-      // todo: update state
     } catch (exception) {
       notify('error', `fail adding a new blog`)
       console.log(exception)
+    }
+  }
+
+  const handleRemove = async (id) => {
+    try {
+      await blogService.remove(id)
+      const updatedBlogs = blogs.filter(blog => blog.id !== id)
+      setBlogs(updatedBlogs)
+      notify('success', 'the blog has been removed')
+    } catch (exception) {
+      notify('error', 'fail to remove the blog')
+    }
+  }
+
+  const handleUpdate = async (blog, updatedData) => {
+    // updatedData { title, author, url, likes }
+    // console.log('blog', blog)
+    try {
+      let updatedBlog = await blogService.update(blog.id, updatedData)
+      updatedBlog.user = {...blog.user}
+      // console.log('updatedBlog', updatedBlog)
+      const updatedBlogs = blogs.map(item => item.id === blog.id ? updatedBlog : item)
+      setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
+    } catch (exception) {
+      notify('error', 'fail to update the blog')
     }
   }
 
@@ -115,12 +145,19 @@ const App = () => {
         }
 
         <div>
-          <NewBlog handleNewBlog={handleNewBlog}/>
+          <Togglable showLabel='create new blog' hideLabel='hide form' ref={displayNewBlogRef}>
+            <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
+          </Togglable>
         </div>
 
         <div>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog 
+              key={blog.id} 
+              blog={blog} 
+              handleRemove={handleRemove}
+              handleUpdate={handleUpdate}
+            />
           )}
         </div>
       </div>
@@ -130,7 +167,7 @@ const App = () => {
       <div>
         <h1>log in to application</h1>
         { alertMessage && <AlertMessage type={alertMessage.type} message={alertMessage.message}/>}
-        <Login handleLogin={handleLogin}/>
+        <Login handleLogin={handleLogin} ref={loginFormRef} />
       </div>
     )
   }
