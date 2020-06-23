@@ -17,7 +17,7 @@ const Togglable = React.forwardRef((props, ref) => {
 
   return (
     <div>
-      <div style={{ display: visible ? '' : 'none' }}>
+      <div  className='togglable-content' style={{ display: visible ? '' : 'none' }}>
         {visible ? children : null}
       </div>
       { !noButtonLabel && 
