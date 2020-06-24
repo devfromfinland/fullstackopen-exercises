@@ -23,13 +23,14 @@ const Login = React.forwardRef(({ handleLogin }, ref) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} id='login-form'>
         <div>
           username 
           <input
             type='text' 
             value={username} 
             onChange={e => setUsername(e.target.value)}
+            className='input-username'
           />
         </div>
         <div>
@@ -38,9 +39,10 @@ const Login = React.forwardRef(({ handleLogin }, ref) => {
             type='password'
             value={password} 
             onChange={e => setPassword(e.target.value)}
+            className='input-password'
           />
         </div>
-        <button type='submit'>login</button>
+        <button type='submit' className='btn-login'>login</button>
       </form>
     </div>
   )

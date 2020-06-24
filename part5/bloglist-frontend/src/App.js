@@ -129,7 +129,7 @@ const App = () => {
 
   if (user) {
     return (
-      <div>
+      <div id='blogs'>
         <h1>blogs</h1>
 
         { alertMessage && <AlertMessage type={alertMessage.type} message={alertMessage.message}/>}
@@ -138,7 +138,7 @@ const App = () => {
           <div>
             {user.name} logged in
             { }
-            <button onClick={handleLogout}>
+            <button onClick={handleLogout} className='btn-logout'>
               logout
             </button>
           </div>

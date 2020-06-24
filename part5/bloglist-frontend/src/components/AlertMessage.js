@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const AlertMessage = ({ type, message }) => {
   return (
-    <div className={type}>
+    <div className={type} id='notification'>
       {message}
     </div>
   )

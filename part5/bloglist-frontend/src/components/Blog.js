@@ -33,7 +33,7 @@ const Blog = ({ blog, handleRemove, handleUpdate }) => {
       </button>
       <Togglable noButtonLabel={true} ref={displayDetailsRef}>
         <div className='blog-url'>{blog.url}</div>
-        <div className='blog-likes'>{blog.likes} <button onClick={handleLike} className='btn-likes'>like</button></div>
+        <div className='blog-likes' data-likes={blog.likes}>{blog.likes} <button onClick={handleLike} className='btn-likes'>like</button></div>
         <div className='blog-user'>{blog.user.name}</div>
         { authedUser
           ? (authedUser.username === blog.user.username
