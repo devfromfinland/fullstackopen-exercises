@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
 
 const Anecdote = (props) => {
   // const id = useParams().id
@@ -14,7 +14,7 @@ const Anecdote = (props) => {
     <div>
       <h2>{content}</h2>
       <p>has {votes} votes</p>
-      <p>for more info, see <a href={info} target='_blank'>{info}</a></p>
+      <p>for more info, see <a href={info}>{info}</a></p>
     </div>
   )
 }
