@@ -1,8 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import anecdoteService from '../services/anecdotes'
 import { createAnecdote } from '../reducers/anecdoteReducer'
-import { showNotification, hideNotification } from '../reducers/notificationReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
@@ -12,13 +11,8 @@ const AnecdoteForm = () => {
     const anecdote = event.target.inputAnecdote.value
     event.target.inputAnecdote.value = ''
     if (anecdote !== '') {
-      const result = await anecdoteService.createNew(anecdote)
-      dispatch(createAnecdote(result))
-      
-      dispatch(showNotification(`you created '${anecdote}'`))
-      setTimeout(() => {
-        dispatch(hideNotification())
-      }, 5000)
+      dispatch(createAnecdote(anecdote))
+      dispatch(setNotification(`you created '${anecdote}'`, 5))
     } else {
       alert('enter the text first')
     }

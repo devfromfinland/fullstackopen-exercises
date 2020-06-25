@@ -16,6 +16,15 @@ export const hideNotification = () => {
   }
 }
 
+export const setNotification = (message, time) => {
+  return async dispatch => {
+    dispatch(showNotification(message))
+    setTimeout(() => {
+      dispatch(hideNotification())
+    }, time * 1000)
+  }
+}
+
 const notificationReducer = (state = initialNotification, action) => {
   // console.log('state now: ', state)
   // console.log('action', action)

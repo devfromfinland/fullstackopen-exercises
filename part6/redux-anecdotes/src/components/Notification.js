@@ -7,7 +7,8 @@ const Notification = () => {
   const style = {
     border: 'solid',
     padding: 10,
-    borderWidth: 1
+    borderWidth: 1,
+    backgroundColor: 'rgb(220, 220, 220)'
   }
 
   return notification.visible 
