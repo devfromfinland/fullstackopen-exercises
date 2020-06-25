@@ -3,6 +3,8 @@ const initialNotification = {
   message: 'This is the initial notification'
 }
 
+let timeID
+
 export const showNotification = (message) => {
   return {
     type: 'SHOW',
@@ -19,9 +21,28 @@ export const hideNotification = () => {
 export const setNotification = (message, time) => {
   return async dispatch => {
     dispatch(showNotification(message))
-    setTimeout(() => {
+    
+    if (timeID) {
+      clearTimeout(timeID)
+    }
+
+    timeID = setTimeout(() => {
       dispatch(hideNotification())
     }, time * 1000)
+  }
+}
+
+export const setTimer = (timeId) => {
+  return {
+    type: 'SET_TIMER',
+    timeId
+  }
+}
+
+export const clearTimer = (timeId) => {
+  return {
+    type: 'CLEAR_TIMER',
+    timeId
   }
 }
 

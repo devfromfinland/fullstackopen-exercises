@@ -8,7 +8,7 @@ const Notification = () => {
     border: 'solid',
     padding: 10,
     borderWidth: 1,
-    backgroundColor: 'rgb(220, 220, 220)'
+    backgroundColor: 'rgb(174, 214, 241)'
   }
 
   return notification.visible 
