@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
 
 import Menu from './components/Menu'
 import AnecdoteList from './components/AnecdoteList'
@@ -54,8 +54,13 @@ const App = () => {
     }, time * 1000)
   }
 
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(a => a.id === match.params.id)
+    : null
+  
   return (
-    <Router>
+    <div>
       <h1>Software anecdotes</h1>
       <Menu />
 
@@ -80,7 +85,7 @@ const App = () => {
         </Route>
 
         <Route path='/anecdotes/:id'>
-          <Anecdote anecdotes={anecdotes} />
+          <Anecdote anecdote={anecdote} />
         </Route>
 
         <Route path='/about'>
@@ -93,7 +98,7 @@ const App = () => {
       </Switch>
 
       <Footer />
-    </Router>
+    </div>
   )
 }
 
