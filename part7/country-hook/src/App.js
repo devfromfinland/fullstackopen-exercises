@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const baseURL = 'https://restcountries.eu/rest/v2/name'
+
 const useField = (type) => {
   const [value, setValue] = useState('')
 
@@ -18,12 +20,41 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
-  useEffect()
+  useEffect(() => {
+    const fetchData = async (name) => {
+      console.log('name', name)
+      try {
+        const response = await axios.get(`${baseURL}/${name}?fullText=true'`)
+      console.log('fetched data', response.data)
+      setCountry(response.data[0])
+      } catch (error) {
+        setCountry(null)
+      }
+    }
 
-  return country
+    name === ''
+      ? setCountry(null)
+      : fetchData(name)
+  }, [name])
+
+  const found = country ? true : false
+  const data = country
+    ? {
+      name: country.name,
+      capital: country.capital,
+      population: country.population,
+      flag: country.flag
+    }
+    : null
+
+  return {
+    found,
+    data
+  }
 }
 
 const Country = ({ country }) => {
+  // console.log('country', country)
   if (!country) {
     return null
   }
@@ -51,7 +82,7 @@ const App = () => {
   const [name, setName] = useState('')
   const country = useCountry(name)
 
-  const fetch = (e) => {
+  const fetch = async (e) => {
     e.preventDefault()
     setName(nameInput.value)
   }
@@ -60,7 +91,7 @@ const App = () => {
     <div>
       <form onSubmit={fetch}>
         <input {...nameInput} />
-        <button>find</button>
+        <button type='submit'>find</button>
       </form>
 
       <Country country={country} />
