@@ -1,17 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const AlertMessage = ({ type, message }) => {
+const AlertMessage = ({ type, content }) => {
   return (
     <div className={type} id='notification'>
-      {message}
+      {content}
     </div>
   )
 }
 
 AlertMessage.propTypes = {
   type: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
 }
 
 export default AlertMessage
