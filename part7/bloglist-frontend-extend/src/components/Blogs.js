@@ -1,30 +1,26 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import Blog from './Blog'
-import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+// import Blog from './Blog'
 
 const Blogs = () => {
   const blogs = useSelector(state => state.blogs ? state.blogs.sort((a, b) => b.likes - a.likes) : null)
-  const dispatch = useDispatch()
 
-  const handleRemove = async (id) => {
-    dispatch(removeBlog(id))
-  }
-
-  const handleUpdate = async (blog, updatedData) => {
-    dispatch(updateBlog(blog, updatedData))
+  const styleBlogItem = {
+    padding: 5, borderWidth: 1, borderStyle: 'solid', marginTop: 5, marginBottom: 5
   }
 
   return (
     <div>
       { blogs
         ? blogs.map(blog =>
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleRemove={handleRemove}
-              handleUpdate={handleUpdate}
-            />
+            // <Blog
+            //   key={blog.id}
+            //   blog={blog}
+            // />
+            <div style={styleBlogItem} key={blog.id}>
+              <Link to={'/blogs/' + blog.id}>{blog.title}</Link>
+            </div>
           )
         : <div>Loading...</div>
       }

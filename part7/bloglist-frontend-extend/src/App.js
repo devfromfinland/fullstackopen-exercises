@@ -5,14 +5,17 @@ import './App.css'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Blogs from './components/Blogs'
+import BlogDetails from './components/BlogDetails'
 import Login from './components/Login'
 import AlertMessage from './components/AlertMessage'
 import NewBlog from './components/NewBlog'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
+import User from './components/User'
+import MenuBar from './components/MenuBar'
 
 import { getBlogs, newBlog } from './reducers/blogReducer'
-import { setAuthedUser, loginUser, logoutUser } from './reducers/authedReducer'
+import { setAuthedUser, loginUser } from './reducers/authedReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { getUsers } from './reducers/userReducer'
 
@@ -24,9 +27,7 @@ const App = () => {
   const displayNewBlogRef = React.createRef()
 
   const dispatch = useDispatch()
-  const users = useSelector(state => state.users)
   const user = useSelector(state => state.authedUser)
-  const blogs = useSelector(state => state.blogs ? state.blogs.sort((a, b) => b.likes - a.likes) : null)
   const alertMessage = useSelector(state => state.notification)
 
   useEffect(() => {
@@ -54,10 +55,6 @@ const App = () => {
     }
   }
 
-  const handleLogout = () => {
-    dispatch(logoutUser())
-  }
-
   const handleNewBlog = async ({ title, author, url }) => {
     // const { title, author, url } = blog
     if (title === '' || author === '' || url === '') {
@@ -74,66 +71,38 @@ const App = () => {
     displayNewBlogRef.current.toggleVisibility()
   }
 
-  // return (
-  //   <div id='blogs'>
-  //     <h1>blogs</h1>
-
-  //     { alertMessage && <AlertMessage {...alertMessage}/> }
-
-  //     <Router>
-
-  //       <Switch>
-  //         <Route path='/' exact>
-  //           <div>
-  //             <Togglable showLabel='create new blog' hideLabel='hide form' ref={displayNewBlogRef}>
-  //               <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
-  //             </Togglable>
-  //           </div>
-  //           <Blogs />
-  //         </Route>
-  //       </Switch>
-  //     </Router>
-  //   </div>
-    
-  // )
-
-  if (user) {
-    return (
-      <div id='blogs'>
-        <h1>blogs</h1>
-
-        { alertMessage && <AlertMessage {...alertMessage}/> }
-
-        { user && 
-          <div>
-            {user.name} logged in
-            { }
-            <button onClick={handleLogout} className='btn-logout'>
-              logout
-            </button>
-          </div>
-        }
-
-        <div>
-          <Togglable showLabel='create new blog' hideLabel='hide form' ref={displayNewBlogRef}>
-            <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
-          </Togglable>
+  return ( 
+    <Router>
+      { !user
+        ? <div>
+          <h1>log in to application</h1>
+          { alertMessage && <AlertMessage {...alertMessage}/> }
+          <Login handleLogin={handleLogin} ref={loginFormRef} />
         </div>
-
-        <Blogs />
-
-        <Users />
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <h1>log in to application</h1>
-        { alertMessage && <AlertMessage {...alertMessage}/> }
-        <Login handleLogin={handleLogin} ref={loginFormRef} />
-      </div>
-    )
-  }
+        : <div id='blogs'>
+          <MenuBar />
+          <h1>blog app</h1>
+          { alertMessage && <AlertMessage {...alertMessage}/> }
+            <Switch>
+              <Route path={['/', '/blogs']} exact>
+                <div>
+                  <Togglable showLabel='create new blog' hideLabel='hide form' ref={displayNewBlogRef}>
+                    <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
+                  </Togglable>
+                </div>
+                <Blogs />
+              </Route>
+              <Route path='/users' exact component={Users} />
+              <Route path='/blogs/:id' component={BlogDetails} />
+              <Route path='/users/:id' component={User} />
+              <Route path='*'>
+                Page not found (error 404)
+              </Route>
+            </Switch>
+        </div>
+      }
+    </Router>
+  )
 }
 
 export default App

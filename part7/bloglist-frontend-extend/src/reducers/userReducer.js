@@ -3,7 +3,7 @@ import userService from '../services/users'
 export const getUsers = () => {
   return async dispatch => {
     const users = await userService.getAll()
-    console.log('fetched users', users)
+    // console.log('fetched users', users)
     dispatch({
       type: 'RECEIVE',
       users
@@ -12,8 +12,8 @@ export const getUsers = () => {
 }
 
 const userReducer = (state = null, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+  // console.log('state now: ', state)
+  // console.log('action', action)
 
   switch (action.type) {
     case 'RECEIVE':

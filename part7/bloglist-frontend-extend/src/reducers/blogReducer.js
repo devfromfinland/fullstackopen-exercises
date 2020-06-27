@@ -24,7 +24,8 @@ export const newBlog = (blog, authedUser) => {
           name: authedUser.name,
           id: savedBlog.user
         },
-        likes: 0
+        likes: 0,
+        comments: []
       }
   
       dispatch({
@@ -92,6 +93,29 @@ export const updateBlog = (blog, updatedData) => {
   }
 }
 
+export const addNewComment = (id, comment) => {
+  return async dispatch => {
+    try {
+      await blogService.addComment(id, { comment })
+      dispatch({
+        type: 'NEW_COMMENT',
+        id,
+        comment,
+      })
+      dispatch(setNotification({
+        type: 'success',
+        content: 'new comment added successfully'
+      }))
+    } catch (error) {
+      console.log(error)
+      dispatch(setNotification({
+        type: 'error',
+        content: 'failed to add new comment'
+      }))
+    }
+  }
+}
+
 const blogReducer = (state = null, action) => {
   // console.log('state now: ', state)
   // console.log('action', action)
@@ -108,6 +132,14 @@ const blogReducer = (state = null, action) => {
       return state.filter(blog => blog.id !== action.id)
     case 'UPDATE_BLOG':
       return state.map(item => item.id === action.updatedBlog.id ? action.updatedBlog : item)
+    case 'NEW_COMMENT':
+      return state.map(item => item.id !== action.id ? item : {
+        ...item,
+        comments: [
+          ...item.comments,
+          action.comment
+        ]
+      })
     default:
       return state
   }

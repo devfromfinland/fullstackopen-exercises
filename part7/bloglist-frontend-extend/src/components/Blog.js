@@ -1,24 +1,28 @@
 import React, { useState } from 'react'
 import Togglable from './Togglable'
 import { getAuthedUser } from '../utils/helpers'
+import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, handleRemove, handleUpdate }) => {
+const Blog = ({ blog }) => {
   const [display, setDisplay] = useState(false)
   const displayDetailsRef = React.createRef()
+
+  const dispatch = useDispatch()
 
   const toggle = () => {
     displayDetailsRef.current.toggleVisibility()
     setDisplay(!display)
   }
 
-  const handleLike = async () => {
-    handleUpdate(blog, { likes: blog.likes + 1 })
+  const handleLike = () => {
+    dispatch(updateBlog(blog, { likes: blog.likes + 1 }))
   }
 
-  const remove = () => {
+  const handleRemove = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      handleRemove(blog.id)
+      dispatch(removeBlog(blog.id))
     }
   }
 
@@ -37,7 +41,7 @@ const Blog = ({ blog, handleRemove, handleUpdate }) => {
         <div className='blog-user'>{blog.user.name}</div>
         { authedUser
           ? (authedUser.username === blog.user.username
-            ? <div><button onClick={remove} className='btn-remove'>remove</button></div>
+            ? <div><button onClick={handleRemove} className='btn-remove'>remove</button></div>
             : null
           )
           : null
