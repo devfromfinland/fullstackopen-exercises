@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { updateBlog, addNewComment } from '../reducers/blogReducer'
+import { v4 as uuidv4 } from 'uuid'
 
 const BlogDetail = () => {
   const dispatch = useDispatch()
@@ -41,7 +42,7 @@ const BlogDetail = () => {
 
       { blog.comments.length > 0
         ? <ul>
-          {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
+          {blog.comments.map(comment => <li key={uuidv4()}>{comment}</li>)}
         </ul>
         : <p>No comment for this blog yet, feel free to add the first one.</p>
       }

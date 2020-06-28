@@ -12,7 +12,7 @@ import NewBlog from './components/NewBlog'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
 import User from './components/User'
-import MenuBar from './components/MenuBar'
+import AppMenu from './components/AppMenu'
 
 import { getBlogs, newBlog } from './reducers/blogReducer'
 import { setAuthedUser, loginUser } from './reducers/authedReducer'
@@ -73,24 +73,25 @@ const App = () => {
 
   return ( 
     <Router>
+      <AppMenu />
       { !user
         ? <div>
-          <h1>log in to application</h1>
           { alertMessage && <AlertMessage {...alertMessage}/> }
           <Login handleLogin={handleLogin} ref={loginFormRef} />
         </div>
         : <div id='blogs'>
-          <MenuBar />
-          <h1>blog app</h1>
           { alertMessage && <AlertMessage {...alertMessage}/> }
             <Switch>
               <Route path={['/', '/blogs']} exact>
+                <Blogs />
                 <div>
                   <Togglable showLabel='create new blog' hideLabel='hide form' ref={displayNewBlogRef}>
                     <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
                   </Togglable>
                 </div>
-                <Blogs />
+              </Route>
+              <Route path='/newBlog'>
+                <NewBlog handleNewBlog={handleNewBlog} ref={newBlogFormRef} />
               </Route>
               <Route path='/users' exact component={Users} />
               <Route path='/blogs/:id' component={BlogDetails} />
