@@ -19,8 +19,10 @@ const BlogDetail = () => {
 
   const handleNewComment = (e) => {
     e.preventDefault()
-    dispatch(addNewComment(id, data))
-    setData('')
+    if (data !== '') {
+      dispatch(addNewComment(id, data))
+      setData('')
+    }
   }
 
   return blog
