@@ -33,14 +33,16 @@ const NewBook = (props) => {
       const cacheData2 = cache.readQuery({ query: ALL_AUTHORS })
       // console.log('cacheData2', cacheData2)
 
-      let updatedAuthor = cacheData2.allAuthors.find(item => item.name === response.data.addBook.author)
+      let updatedAuthor = cacheData2.allAuthors.find(item => item.name === response.data.addBook.author.name)
+
+      console.log('updatedAuthor', updatedAuthor)
 
       cache.writeQuery({
         query: ALL_AUTHORS,
         data: {
           ...cacheData2,
           allAuthors: updatedAuthor
-            ? cacheData2.allAuthors.map(item => item.name === response.data.addBook.author 
+            ? cacheData2.allAuthors.map(item => item.name === response.data.addBook.author.name
                 ? { ...updatedAuthor, bookCount: updatedAuthor.bookCount + 1 }
                 : item
               )

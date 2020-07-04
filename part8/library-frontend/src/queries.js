@@ -22,7 +22,6 @@ mutation updateAuthor ($name: String!, $year: Int) {
   editAuthor(name: $name, setBornTo: $year) {
     name
     born
-    bookCount
   }
 }
 `
@@ -32,7 +31,11 @@ query {
   allBooks {
     id
     title
-    author
+    genres
+    author {
+      name
+      born
+    }
     published
   }
 }
@@ -47,7 +50,41 @@ mutation createBook ($title: String!, $published: Int!, $author: String!, $genre
     genres: $genres
   ) {
     title
-    author
+    author {
+      name
+    }
+  }
+}
+`
+
+export const ME = gql`
+query {
+  me {
+    username
+    favoriteGenre
+  }
+}
+`
+
+export const LOGIN = gql`
+mutation logMeIn ($username: String!, $password: String!) {
+  login (
+    username: $username,
+    password: $password
+  ) {
+    value
+  }
+}
+`
+
+export const CREATE_USER = gql`
+mutation createUser ($username: String!, $favoriteGenre: String!) {
+  addUser (
+    username: $username,
+    favoriteGenre: $favoriteGenre
+  ) {
+    username,
+    favoriteGenre
   }
 }
 `
