@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
-const NewBook = (props) => {
+const NewBook = ({ show, notify }) => {
   const [title, setTitle] = useState('')
   const [author, setAuhtor] = useState('')
   const [published, setPublished] = useState('')
@@ -10,9 +10,9 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
-    onError: error => [
-      console.log(error.graphQLErrors[0].message)
-    ],
+    onError: error => {
+      notify('error', error.graphQLErrors[0].message)
+    },
     update: (cache, response) => {
       // console.log('response data', response.data)
       const cacheData = cache.readQuery({ query: ALL_BOOKS })
@@ -35,7 +35,7 @@ const NewBook = (props) => {
 
       let updatedAuthor = cacheData2.allAuthors.find(item => item.name === response.data.addBook.author.name)
 
-      console.log('updatedAuthor', updatedAuthor)
+      // console.log('updatedAuthor', updatedAuthor)
 
       cache.writeQuery({
         query: ALL_AUTHORS,
@@ -55,16 +55,18 @@ const NewBook = (props) => {
     }
   })
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
   const submit = async (event) => {
     event.preventDefault()
 
-    console.log(title, published, author, genres)
-    const sth = await createBook({ variables: { title, published: parseInt(published), author, genres }})
-    console.log('returned value', sth)
+    // console.log(title, published, author, genres)
+    await createBook({ variables: { title, published: parseInt(published), author, genres }})
+    // console.log('returned value', sth)
+
+    notify('success', `new book ${title} added`)
 
     setTitle('')
     setPublished('')

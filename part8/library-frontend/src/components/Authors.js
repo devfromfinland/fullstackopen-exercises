@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UPDATE_AUTHOR, ALL_AUTHORS } from '../queries'
 
-const Authors = (props) => {
+const Authors = ({ show, authors, user, notify }) => {
   const [ name, setName ] = useState('none')
   const [ born, setBorn ] = useState('')
   const [ updateAuthor ] = useMutation(UPDATE_AUTHOR, {
@@ -11,10 +11,8 @@ const Authors = (props) => {
       console.log(error.graphQLErrors[0].message)
     ],
     update: (cache, response) => {
-      // console.log('response data', response.data) // editAuthor
       const { editAuthor } = response.data
       const cacheData = cache.readQuery({ query: ALL_AUTHORS })
-      // console.log('cacheData', cacheData)
       
       cache.writeQuery({
         query: ALL_AUTHORS,
@@ -22,17 +20,16 @@ const Authors = (props) => {
           ...cacheData,
           allAuthors: cacheData.allAuthors.map(item => item.name === editAuthor.name 
             ? editAuthor
-            : item)
+            : item
+            )
         }
       })
     }
   })
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
-
-  const { authors } = props
 
   if (!authors) {
     return <div>Nothing to show</div>
@@ -42,14 +39,14 @@ const Authors = (props) => {
     e.preventDefault()
 
     if (name === 'none') {
-      alert('select an author first')
+      notify('error', 'select an author first')
+    } else if (born === '') {
+      notify('error', 'enter which year to be updated')
     } else {
       const year = parseInt(born)
-      // console.log(name, year)
-      const result = 
       await updateAuthor({ variables: {name, year} })
-      console.log('result', result)
 
+      notify('success', `${name}'s born year has been updated to ${born}`)
       setName('none')
       setBorn('')
     }
@@ -79,25 +76,28 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-      <h3>Set birthyear</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name 
-          <select value={name} onChange={(e) => setName(e.target.value)}>
-            <option value='none'>Select author</option>
-            {authors.map(a =>
-              <option key={a.id} value={a.name}>{a.name}</option>
-            )}
-          </select>
-          
-        </div>
-        <div>
-          born <input type='text' value={born} onChange={(e) => setBorn(e.target.value)}/>
-        </div>
-        <button type='submit'>update author</button>
-      </form>
-      
-
+      { !user
+        ? null
+        : <>
+          <h3>Set birthyear</h3>
+          <form onSubmit={handleSubmit}>
+            <div>
+              name 
+              <select value={name} onChange={(e) => setName(e.target.value)}>
+                <option value='none'>Select author</option>
+                {authors.map(a =>
+                  <option key={a.id} value={a.name}>{a.name}</option>
+                )}
+              </select>
+              
+            </div>
+            <div>
+              born <input type='text' value={born} onChange={(e) => setBorn(e.target.value)}/>
+            </div>
+            <button type='submit'>update author</button>
+          </form>
+        </>
+      }
     </div>
   )
 }

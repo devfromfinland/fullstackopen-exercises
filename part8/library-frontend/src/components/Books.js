@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { allGenres } from '../utils/helpers'
 
 const Books = (props) => {
+  const [genre, setGenre] = useState('')
+
   if (!props.show) {
     return null
   }
@@ -11,11 +14,23 @@ const Books = (props) => {
     return <div>Nothing to show</div>
   }
 
+  const genres = allGenres(books)
+
   return (
     <div>
       <h2>books</h2>
 
-      <table>
+      { genres && genres.map(item => <button key={item} onClick={() => setGenre(item)}>
+        {item}
+      </button>)}
+      <button onClick={() => setGenre('')}>all genres</button>
+
+      { genre && <div>
+          in genre <span style={{ fontWeight: 'bold', color: 'blue'}}>{genre}</span>
+        </div>
+      }
+
+      <table style={{ marginTop: '16px'}}>
         <tbody>
           <tr>
             <th></th>
@@ -26,13 +41,21 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {books.map(a =>
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          )}
+          { genre === ''
+            ? books.map(a =>
+              <tr key={a.id}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>)
+            : books.filter(item => item.genres.indexOf(genre) > -1)
+              .map(a =>
+              <tr key={a.id}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>)
+          }
         </tbody>
       </table>
     </div>
