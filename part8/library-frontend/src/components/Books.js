@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { allGenres } from '../utils/helpers'
 
-const Books = (props) => {
+const Books = ({ show, books }) => {
   const [genre, setGenre] = useState('')
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
-
-  const { books } = props
 
   if (!books) {
     return <div>Nothing to show</div>
