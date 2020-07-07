@@ -20,8 +20,40 @@ const App = () => {
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
   const client = useApolloClient()
-  // const me = useQuery(ME)
-  // console.log('me', me)
+
+  const handleLoginSuccess = (token) => {
+    saveAuthedUser(token) // update local storage
+    setUser(token) // update local state
+    setPage('authors') // update showing page
+
+    initCache() // fix mutation error when store is emptied after logging out
+  }
+
+  const handleLogout = (e) => {
+    e.preventDefault()
+    removeAuthedUser() // remove from localStorage
+    client.resetStore() // remove cache
+    setUser(null) // remove from local state
+  }
+
+  const initCache = () => {
+    // init graphQL cache for all users with current data
+    if (books.data && authors.data) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: {
+          allBooks: books.data.allBooks
+        }
+      })
+
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: authors.data.allAuthors
+        }
+      })
+    }
+  }
 
   useEffect(() => {
     const authedUser = getAuthedUser()
@@ -30,11 +62,6 @@ const App = () => {
     }
   }, [])
 
-  const handleLoginSuccess = (token) => {
-    saveAuthedUser(token) // update local storage
-    setUser(token) // update local state
-    setPage('authors') // update showing page
-  }
 
   const notify = (type, message) => {
     setNotification({
@@ -45,14 +72,9 @@ const App = () => {
       setNotification(null)
     }, 5000)
   }
+  
 
-  const handleLogout = (e) => {
-    e.preventDefault()
-
-    setUser(null) // remove from local state
-    removeAuthedUser() // remove from localStorage
-    client.resetStore() // remove cache
-  }
+  
 
   if (!authors.data || !books.data) {
     return <div>Can't connect to server. Check if the server is online and refresh this page.</div>

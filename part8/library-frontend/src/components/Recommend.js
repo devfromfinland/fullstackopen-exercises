@@ -11,8 +11,9 @@ const Recommend = ({ show, books }) => {
   }
 
   // user: { username, favoriteGenre }
-  const { user } = getAuthedUser()
-  const genre = user.favoriteGenre
+  const authedUser = getAuthedUser()
+  const user = authedUser ? authedUser.user : null
+  const genre = user ? user.favoriteGenre : null
 
   return (
     <div>

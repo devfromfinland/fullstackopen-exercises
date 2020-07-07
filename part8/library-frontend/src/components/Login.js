@@ -9,7 +9,12 @@ const Login = ({ show, handleLoginSuccess, notify }) => {
   const [ login ] = useMutation(LOGIN, {
     onError: error => {
       notify('error', error.graphQLErrors[0].message)
-      // console.log(error.graphQLErrors)
+      // console.log(error)
+    },
+    onCompleted({ login }) {
+      setUsername('')
+      setPassword('')
+      handleLoginSuccess(login)
     }
   })
   
@@ -25,19 +30,7 @@ const Login = ({ show, handleLoginSuccess, notify }) => {
       return
     }
 
-    const response = await login({ variables: { 
-      username, 
-      password 
-    }})
-
-    const token = response ? response.data.login : null
-    console.log('token', token)
-
-    if (token) {
-      setUsername('')
-      setPassword('')
-      handleLoginSuccess(token)
-    }
+    await login({ variables: { username, password }})
   }
 
   return (
