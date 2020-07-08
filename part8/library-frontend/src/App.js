@@ -161,7 +161,7 @@ const App = () => {
     }, 5000)
   }
   
-  if (!authors.data && !books.data) {
+  if (!authors.data || !books.data) {
     return <div>Can't connect to server. Check if the server is online and refresh this page.</div>
   }
 
