@@ -1,0 +1,19 @@
+{
+  "name": "body-mass",
+  "version": "1.0.0",
+  "description": "This app will calculate body mass (coded with TypeScript - part 9 of Fullstack Open 2020 course)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typescript",
+    "bodymass"
+  ],
+  "author": "Viet Phan",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  }
+}
