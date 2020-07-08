@@ -78,9 +78,14 @@ mutation createBook ($title: String!, $published: Int!, $author: String!, $genre
     published: $published,
     genres: $genres
   ) {
+    id
     title
+    published
+    genres
     author {
       name
+      born
+      id
     }
   }
 }
@@ -109,6 +114,32 @@ mutation createUser ($username: String!, $favoriteGenre: String!) {
   ) {
     username,
     favoriteGenre
+  }
+}
+`
+
+export const BOOK_ADDED = gql`
+subscription {
+  bookAdded {
+    id
+    published
+    title
+    genres
+    author {
+      name
+      born
+      id
+    }
+  }
+}
+`
+
+export const AUTHOR_UPDATED = gql`
+subscription {
+  authorUpdated {
+    id
+    name
+    born
   }
 }
 `

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
+import { CREATE_BOOK } from '../queries'
 
 const NewBook = ({ show, notify }) => {
   const [title, setTitle] = useState('')
@@ -13,46 +13,7 @@ const NewBook = ({ show, notify }) => {
     onError: error => {
       notify('error', error.graphQLErrors[0].message)
     },
-    update: (cache, response) => {
-      // console.log('response data', response.data)
-      const cacheData = cache.readQuery({ query: ALL_BOOKS })
-      // console.log('cacheData', cacheData)
-      
-      cache.writeQuery({
-        query: ALL_BOOKS,
-        data: {
-          ...cacheData,
-          allBooks: [
-            ...cacheData.allBooks,
-            response.data.addBook
-          ]
-        }
-      })
-
-      // need to update author (countBooks) as well
-      const cacheData2 = cache.readQuery({ query: ALL_AUTHORS })
-      // console.log('cacheData2', cacheData2)
-
-      let updatedAuthor = cacheData2.allAuthors.find(item => item.name === response.data.addBook.author.name)
-
-      // console.log('updatedAuthor', updatedAuthor)
-
-      cache.writeQuery({
-        query: ALL_AUTHORS,
-        data: {
-          ...cacheData2,
-          allAuthors: updatedAuthor
-            ? cacheData2.allAuthors.map(item => item.name === response.data.addBook.author.name
-                ? { ...updatedAuthor, bookCount: updatedAuthor.bookCount + 1 }
-                : item
-              )
-            : [
-            ...cacheData2.allAuthors,
-            { name: response.data.addBook.author, bookCount: 1 }
-          ]
-        }
-      })
-    }
+    // no need to update cache since the subscription will update
   })
 
   if (!show) {
