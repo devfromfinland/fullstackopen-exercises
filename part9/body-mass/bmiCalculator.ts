@@ -1,30 +1,34 @@
-const calculateBmi = (height: number, weight: number) => {
-  const bmi = weight / Math.pow(height * 0.01, 2)
+export const calculateBmi = (height: number, weight: number): string => {
+  const bmi = weight / Math.pow(height * 0.01, 2);
 
   switch (true) {
     case (bmi < 15):
-      return 'Very severely underweight'
+      return 'Very severely underweight';
     case (bmi >= 15 && bmi < 16):
-      return 'Severely underweight'
+      return 'Severely underweight';
     case (bmi >= 16 && bmi < 18.5):
-      return 'Underweight'
+      return 'Underweight';
     case (bmi >= 18.5 && bmi < 25):
-      return 'Normal (healthy weight)'
+      return 'Normal (healthy weight)';
     case (bmi >= 25 && bmi < 30):
-      return 'Overweight'
+      return 'Overweight';
     case (bmi >= 30 && bmi < 35):
-      return 'Obese Class I (Moderately obese)'
+      return 'Obese Class I (Moderately obese)';
     case (bmi >= 35 && bmi < 40):
-      return 'Obese Class II (Severely obese)'
+      return 'Obese Class II (Severely obese)';
     case (bmi >= 40):
-      return 'Obese Class III (Very severely obese)'
+      return 'Obese Class III (Very severely obese)';
     default:
-      throw new Error('Something is wrong!')
+      throw new Error('Something is wrong!');
   }
-}
+};
 
 // console.log(process.argv)
-const h = Number(process.argv[2])
-const w = Number(process.argv[3])
+const h = Number(process.argv[2]);
+const w = Number(process.argv[3]);
 
-console.log(calculateBmi(h, w))
+if (!w || !h || isNaN(w) || isNaN(h)) {
+  console.log('arguments are missing');
+} else {
+  console.log(calculateBmi(h, w));
+}
