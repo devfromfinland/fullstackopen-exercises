@@ -1,19 +1,30 @@
-import patientData from '../../data/patients.json';
-import { Patient, NonSensitivePatient, NewPatient } from '../types';
+// import patientData from '../../data/patients.json';
+import { Patient, PublicPatient, NewPatient } from '../types';
 import { v4 as uuid } from 'uuid';
-import { correctNewPatientInput } from '../utils/helpers';
+// import { correctNewPatientInput } from '../utils/helpers';
+import patients from '../../data/patientsData';
 
-const patients: Patient [] = patientData.map(item => {
-  const correctData = correctNewPatientInput(item) as Patient;
-  correctData.id = item.id;
-  return correctData;
-});
+// const patients: Patient [] = patientData.map(item => {
+//   const correctData = correctNewPatientInput(item) as Patient;
+//   correctData.id = item.id;
+//   if (!correctData.entries) {
+//     correctData.entries = [];
+//   }
+//   return correctData;
+// });
+
 
 const getPatients = (): Array<Patient> => {
+  console.log('patients', patients);
   return patients;
 };
 
-const getNonSensitivePatients = (): NonSensitivePatient[] => {
+const getPatient = (id: string): Patient | undefined => {
+  const patient = patients.find(item => item.id === id);
+  return patient;
+};
+
+const getNonSensitivePatients = (): PublicPatient[] => {
   return patients.map(({id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -21,7 +32,7 @@ const getNonSensitivePatients = (): NonSensitivePatient[] => {
     gender,
     occupation
   }));
-}; 
+};
 
 const addPatient = (data: NewPatient): Patient => {
   const id: string = uuid();
@@ -38,5 +49,6 @@ const addPatient = (data: NewPatient): Patient => {
 export default {
   getPatients,
   getNonSensitivePatients,
-  addPatient
+  addPatient,
+  getPatient,
 };

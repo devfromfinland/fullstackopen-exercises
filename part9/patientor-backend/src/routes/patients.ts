@@ -19,4 +19,21 @@ router.post('/', (req, res) => {
   }
 });
 
+router.get('/:id', (req, res) => {
+  try {
+    console.log('request', req);
+    console.log('request params', req.params);
+    const id: string = req.params.id;
+    const patient = patientService.getPatient(id);
+
+    patient
+      ? res.send(JSON.stringify(patient))
+      : res.status(400).send(`Couldn't find the patient in database`);
+    
+  } catch (e) {
+    const err: Error = e as Error;
+    res.status(400).send(err.message);
+  }
+});
+
 export default router;
