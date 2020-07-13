@@ -1,8 +1,9 @@
 // import patientData from '../../data/patients.json';
-import { Patient, PublicPatient, NewPatient } from '../types';
+import { Patient, PublicPatient, NewPatient, Entry, EntryInput } from '../types';
 import { v4 as uuid } from 'uuid';
 // import { correctNewPatientInput } from '../utils/helpers';
 import patients from '../../data/patientsData';
+import { correctNewEntryInput } from '../utils/helpers';
 
 // const patients: Patient [] = patientData.map(item => {
 //   const correctData = correctNewPatientInput(item) as Patient;
@@ -46,9 +47,19 @@ const addPatient = (data: NewPatient): Patient => {
   return newPatient;
 };
 
+const addEntry = (patientId: string, input: EntryInput): Entry => {
+  const newEntry = correctNewEntryInput(input);
+  
+  const foundIndex = patients.findIndex(item => item.id === patientId);
+  patients[foundIndex].entries.push(newEntry);
+
+  return newEntry;
+};
+
 export default {
   getPatients,
   getNonSensitivePatients,
   addPatient,
   getPatient,
+  addEntry,
 };

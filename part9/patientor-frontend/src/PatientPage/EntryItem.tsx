@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Entry, Diagnose } from '../types';
+import { Entry, Diagnose, HealthCheckRating } from '../types';
 import { apiBaseUrl } from '../constants';
 import axios from 'axios';
 import { Segment, Icon } from 'semantic-ui-react';
@@ -39,6 +39,21 @@ const EntryItem: React.FC<Props> = ({ entry }) => {
     console.log(diagnoses);
   }, [entry]);
 
+  const ratingIcon = (rating: HealthCheckRating) => {
+    switch (rating) {
+      case 0:
+        return <Icon name='heart' color='green'/>;
+      case 1:
+        return <Icon name='heart' color='olive'/>;
+      case 2:
+        return <Icon name='heart' color='orange'/>;
+      case 3:
+        return <Icon name='heart' color='red'/>;
+      default:
+        return '...';
+    }
+  };
+
   switch (entry.type) {
     case 'HealthCheck':
       return (<Segment>
@@ -47,7 +62,7 @@ const EntryItem: React.FC<Props> = ({ entry }) => {
         <i>{entry.description}</i>
       </div>
       <div>
-        <Icon name='heart' color={entry.healthCheckRating === 0 ? 'green' : 'orange'}/>
+        {ratingIcon(entry.healthCheckRating)}
       </div>
     </Segment>);
     case 'Hospital':

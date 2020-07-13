@@ -9,7 +9,10 @@ interface Props {
 const Entries: React.FC<Props> = ({ entries }) => {
   return (
     <div>
-      {entries && entries.map(entry => <EntryItem entry={entry} key={entry.id}/>)}
+      {entries && entries.length > 0
+        ? entries.map(entry => <EntryItem entry={entry} key={entry.id}/>)
+        : 'no entry to show'
+      }
     </div>
   );
 };
