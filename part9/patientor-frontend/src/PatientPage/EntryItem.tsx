@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Entry, Diagnose, HealthCheckRating } from '../types';
+import { Entry, Diagnose } from '../types';
 import { apiBaseUrl } from '../constants';
 import axios from 'axios';
 import { Segment, Icon } from 'semantic-ui-react';
 import { assertNever } from '../utils/helpers';
+import HealthRatingBar from '../components/HealthRatingBar';
 
 interface Props {
   entry: Entry;
@@ -39,20 +40,20 @@ const EntryItem: React.FC<Props> = ({ entry }) => {
     console.log(diagnoses);
   }, [entry]);
 
-  const ratingIcon = (rating: HealthCheckRating) => {
-    switch (rating) {
-      case 0:
-        return <Icon name='heart' color='green'/>;
-      case 1:
-        return <Icon name='heart' color='olive'/>;
-      case 2:
-        return <Icon name='heart' color='orange'/>;
-      case 3:
-        return <Icon name='heart' color='red'/>;
-      default:
-        return '...';
-    }
-  };
+  // const ratingIcon = (rating: HealthCheckRating) => {
+  //   switch (rating) {
+  //     case 0:
+  //       return <Icon name='heart' color='green'/>;
+  //     case 1:
+  //       return <Icon name='heart' color='olive'/>;
+  //     case 2:
+  //       return <Icon name='heart' color='orange'/>;
+  //     case 3:
+  //       return <Icon name='heart' color='red'/>;
+  //     default:
+  //       return '...';
+  //   }
+  // };
 
   switch (entry.type) {
     case 'HealthCheck':
@@ -61,9 +62,10 @@ const EntryItem: React.FC<Props> = ({ entry }) => {
       <div>
         <i>{entry.description}</i>
       </div>
-      <div>
+      <HealthRatingBar rating={entry.healthCheckRating} showText={false} />
+      {/* <div>
         {ratingIcon(entry.healthCheckRating)}
-      </div>
+      </div> */}
     </Segment>);
     case 'Hospital':
       return (<Segment>
