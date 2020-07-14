@@ -47,7 +47,7 @@ export const correctNewEntryInput = (data: any): Entry => {
         description,
         employerName: parseEmployername(data.employerName)
       };
-      if (data.sickLeave) {
+      if (data.sickLeave && data.sickLeave.startDate !== '' && data.sickLeave.endDate !== '') {
         newOccupationalEntry.sickLeave = parseSickLeave(data.sickLeave);
       }
       if (data.diagnosisCodes) {
@@ -91,7 +91,7 @@ const parseCriteria = (text: any): string => {
 
 const parseSickLeave = (text: any): SickLeave => {
   const startDate = parseDate(text.startDate);
-  const endDate = parseDate(text.startDate);
+  const endDate = parseDate(text.endDate);
 
   return {
     startDate,
@@ -128,8 +128,8 @@ const parseHealthCheckRating = (text: any): HealthCheckRating => {
   }
 
   const rating = Number(text);
-  console.log('rating', rating, typeof(rating));
-  console.log('healthy', HealthCheckRating.Healthy, typeof(HealthCheckRating.Healthy));
+  // console.log('rating', rating, typeof(rating));
+  // console.log('healthy', HealthCheckRating.Healthy, typeof(HealthCheckRating.Healthy));
   switch (rating) {
     case HealthCheckRating.CriticalRisk:
     case HealthCheckRating.Healthy:

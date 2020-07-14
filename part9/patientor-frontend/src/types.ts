@@ -47,23 +47,23 @@ export interface Discharge {
 }
 
 export interface SickLeave {
-  startDate: '2019-08-05';
-  endDate: '2019-08-28';
+  startDate: string;
+  endDate: string;
 }
 
 export interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: 'HealthCheck';
   healthCheckRating: HealthCheckRating;
 }
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+  type: 'OccupationalHealthcare';
   employerName: string;
   sickLeave?: SickLeave;
 }
 
 export interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
+  type: 'Hospital';
   discharge: Discharge;
 }
 
@@ -71,3 +71,30 @@ export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+export type EntryType = 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
+
+export type EntryInput = Omit<HealthCheckEntry, 'id'> 
+  | Omit<OccupationalHealthcareEntry, 'id'>
+  | Omit<HospitalEntry, 'id'>;
+
+export interface EntryInput2 extends Omit<BaseEntry, 'id'> {
+  type: 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
+  healthCheckRating: HealthCheckRating;
+  employerName: string;
+  // sickLeave?: SickLeave;
+  startDate: string;
+  endDate: string;
+  dischargeDate: string;
+  criteria: string;
+}
+
+export type HealthRatingOption = {
+  value: HealthCheckRating;
+  label: string;
+};
+
+export type EntryTypeOption = {
+  value: EntryType;
+  label: string;
+};

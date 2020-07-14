@@ -14,9 +14,8 @@ import { correctNewEntryInput } from '../utils/helpers';
 //   return correctData;
 // });
 
-
 const getPatients = (): Array<Patient> => {
-  console.log('patients', patients);
+  // console.log('patients', patients);
   return patients;
 };
 

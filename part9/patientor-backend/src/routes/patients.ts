@@ -40,6 +40,7 @@ router.post('/', (req, res) => {
 router.post('/:id/entries', (req, res) => {
   try {
     const id: string = req.params.id;
+    // console.log('request received', req.body);
     const newEntry = patientService.addEntry(id, req.body);
     res.send(JSON.stringify(newEntry));
   } catch (e) {
